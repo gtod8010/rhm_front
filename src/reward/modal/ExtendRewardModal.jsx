@@ -5,7 +5,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
 const ExtendRewardModal = ({ open, onClose, reward, setReward, onSave }) => {
-
+  const tomorrow = dayjs().add(1, 'day');
+  
   useEffect(()=>{
     console.log(reward)
   },[reward])
@@ -38,12 +39,12 @@ const ExtendRewardModal = ({ open, onClose, reward, setReward, onSave }) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="새 종료일"
+            minDate={tomorrow}
             value={reward? dayjs(reward.end_date) : dayjs()}
             onChange={handleDateChange}
             sx={{ width: '100%' }}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth margin="normal" />
-            )}
+            inputFormat="YYYY/MM/DD"
+            slotProps={{ textField: { size: 'small' },field: { format: 'YYYY/MM/DD' } }}
           />
         </LocalizationProvider>
         <div

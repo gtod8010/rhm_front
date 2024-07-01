@@ -68,9 +68,8 @@ const ExtendMultipleRewardsModal = ({
             value={dayjs(extendRowsEndDate)}
             onChange={(newDate) => handleDateChange(newDate)}
             sx={{ width: '100%' }}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth margin="normal" />
-            )}
+            views={['year', 'month', 'day']}
+            slotProps={{ textField: { size: 'small' },field: { format: 'YYYY/MM/DD' } }}
           />
         </LocalizationProvider>
         <Box sx={{ mt: 2 }}>

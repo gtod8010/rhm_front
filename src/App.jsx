@@ -6,9 +6,7 @@ import MainRoute from './route';
 import { LicenseInfo } from '@mui/x-license-pro';
 import { UserProvider } from './login/UserContext'; // 컨텍스트 임포트
 
-LicenseInfo.setLicenseKey(
-  'e06e520e3c028e5089eb70098ac4dafcTz02ODIwOCxFPTE3MTc4MTI1MTI3NzYsUz1wcm8sTE09c3Vic2NyaXB0aW9uLEtWPTI=',
-);
+LicenseInfo.setLicenseKey('4e8f344fbadab826b281e59d0d1945aaTz05MjMwNSxFPTE3NDk3ODA2NTAwMDAsUz1wcm8sTE09c3Vic2NyaXB0aW9uLEtWPTI=');
 
 const theme = createTheme({
   palette: {

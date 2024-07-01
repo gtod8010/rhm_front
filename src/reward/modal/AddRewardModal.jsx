@@ -1,12 +1,39 @@
-import React from 'react';
-import { Modal, TextField, Box, Grid, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Modal, TextField, Box, Grid, Button,Typography } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import holdays from '../../const/holidays';
 
-const AddRewardModal = ({ open, onClose, newReward, setNewReward, handleChange, handleDateChange, handleSave }) => {
-  const today = dayjs();
+const AddRewardModal = ({ open, onClose, newReward, setNewReward, handleChange, handleDateChange, handleSave, userPoints, pointsToConsume, remainingPoints,setPointsToConsume,setRemainingPoints }) => {
+  const tomorrow = dayjs().add(1, 'day');
+
+  useEffect(() => {
+    if (newReward.work_volume && newReward.start_date && newReward.end_date) {
+      const startDate = dayjs(newReward.start_date).startOf('day');
+      const endDate = dayjs(newReward.end_date).startOf('day');
+      const duration = endDate.diff(startDate, 'day') + 1;
+      const totalPoints = duration * newReward.work_volume;
+      setPointsToConsume(totalPoints);
+      setRemainingPoints(userPoints - totalPoints);
+    }
+  }, [newReward, userPoints]);
+
+  const handleSaveInternal = () => {
+    if (remainingPoints < 0) {
+      alert('잔여 포인트 부족으로 리워드를 추가하실 수 없습니다.');
+      return;
+    }
+    handleSave();
+  };
+
+  const isHoliday = (date) => {
+    const formattedDate = date.format("YYYY-MM-DD");
+    return holdays.includes(formattedDate);
+  };
+
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -76,28 +103,35 @@ const AddRewardModal = ({ open, onClose, newReward, setNewReward, handleChange, 
             <Grid item xs={6}>
               <DatePicker
                 label="작업 시작일자"
-                minDate={today}
+                minDate={tomorrow}
                 value={dayjs(newReward.start_date)}
                 onChange={(date) => handleDateChange(date, 'start_date', setNewReward)}
-                renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+                slotProps={{ textField: { size: 'small' },field: { format: 'YYYY/MM/DD' } }}
+                inputFormat="YYYY/MM/DD"
+                shouldDisableDate={isHoliday}
               />
             </Grid>
             <Grid item xs={6}>
               <DatePicker
                 label="작업 종료일자"
-                minDate={today}
+                minDate={tomorrow}
                 value={dayjs(newReward.end_date)}
                 onChange={(date) => handleDateChange(date, 'end_date', setNewReward)}
-                renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+                slotProps={{ textField: { size: 'small' },field: { format: 'YYYY/MM/DD' } }}
+                inputFormat="YYYY/MM/DD"
               />
             </Grid>
           </Grid>
         </LocalizationProvider>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <Box sx={{marginRight : 8}}>
+          <Typography variant="body2" >소진할 포인트: {pointsToConsume}</Typography>
+          <Typography variant="body2" >소진후 포인트: {remainingPoints}</Typography>
+        </Box>
           <Button variant="contained" color="primary" style={{ marginRight: '8px' }} onClick={onClose}>
             취소
           </Button>
-          <Button variant="contained" color="success"  onClick={handleSave}>
+          <Button variant="contained" color="success" onClick={handleSaveInternal}>
             저장
           </Button>
         </div>

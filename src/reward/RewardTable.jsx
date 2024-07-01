@@ -7,6 +7,7 @@ import AddRewardModal from "./modal/AddRewardModal";
 import ExtendRewardModal from "./modal/ExtendRewardModal";
 import ExtendMultipleRewardsModal from "./modal/ExtendMultipleRewardsModal";
 import EditRewardModal from "./modal/EditRewardModal";
+import WorkVolumeModal from "./modal/WorkVolumeModal";
 import DeleteDialog from "./dialog/DeleteDialog";
 import {
   getRewards,
@@ -16,6 +17,7 @@ import {
   editReward,
   deleteReward,
   updateUsedStatus,
+  getMember
 } from "../api/index";
 import { makeStyles } from "@mui/styles";
 import dayjs from "dayjs";
@@ -34,10 +36,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+const calculateTomorrow = () => {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  return tomorrow;
+};
+
 const RewardTable = () => {
   const [rows, setRows] = useState([]);
   const [cellModesModel, setCellModesModel] = useState({});
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [selectionModel, setSelectionModel] = useState([]);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openExtendModal, setOpenExtendModal] = useState(false);
@@ -61,23 +71,32 @@ const RewardTable = () => {
     final_keyword: "",
     work_volume: "",
     place_code: "",
-    start_date: new Date(),
-    end_date: new Date(),
+    start_date: calculateTomorrow(),
+    end_date: calculateTomorrow(),
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [multiDeleteDialogOpen, setMultiDeleteDialogOpen] = useState(false);
   const [deleteRow, setDeleteRow] = useState(null);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({
     id: false,
     reward_no: false, // id 컬럼을 숨깁니다
   });
   const classes = useStyles();
+  const [pageSize, setPageSize] = useState(25);
+  const [page, setPage] = useState(0);
+  const [pointsToConsume, setPointsToConsume] = useState(0);
+  const [remainingPoints, setRemainingPoints] = useState(user? user.userPoints : 0);
+  const [workVolumeModalOpen, setWorkVolumeModalOpen] = useState(false);
+  const [selectedRewardId, setSelectedRewardId] = useState(null);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (storedUser) {
-          const data = await getRewards(storedUser.username);
+        // const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+          const data = await getRewards(user.username);
           setRows(data);
         }
       } catch (error) {
@@ -86,8 +105,8 @@ const RewardTable = () => {
     };
 
     fetchData();
-  }, []);
-
+  }, [user]);
+ 
   const handleAddRow = () => {
     setOpenAddModal(true);
   };
@@ -182,6 +201,23 @@ const RewardTable = () => {
         end_date: newReward.end_date,
       });
       setRows((prevRows) => [...prevRows, addedRow]);
+      
+      const updatedUser = await getMember(user.username);
+      setUser((prevUser) => ({
+        ...prevUser,
+        point: updatedUser.point,
+      }));
+
+      setNewReward({
+        company_name: "",
+        setting_keyword: "",
+        final_keyword: "",
+        work_volume: "",
+        place_code: "",
+        start_date: calculateTomorrow(),
+        end_date: calculateTomorrow(),
+      });
+
       handleCloseAddModal();
     } catch (error) {
       console.error("Error adding reward:", error);
@@ -195,6 +231,13 @@ const RewardTable = () => {
       setRows((prevRows) =>
         prevRows.map((row) => (row.idx === updatedRow.idx ? updatedRow : row))
       );
+
+      const updatedUser = await getMember(user.username);
+      setUser((prevUser) => ({
+        ...prevUser,
+        point: updatedUser.point,
+      }));
+
       handleCloseEditModal();
     } catch (error) {
       console.error("Error editing reward:", error);
@@ -209,6 +252,13 @@ const RewardTable = () => {
       setRows((prevRows) =>
         prevRows.map((row) => (row.idx === updatedRow.idx ? updatedRow : row))
       );
+
+      const updatedUser = await getMember(user.username);
+      setUser((prevUser) => ({
+        ...prevUser,
+        point: updatedUser.point,
+      }));
+
       handleCloseExtendModal();
     } catch (error) {
       console.error("Error extending reward:", error);
@@ -228,7 +278,15 @@ const RewardTable = () => {
             updatedRows.find((updatedRow) => updatedRow.idx === row.idx) || row
         )
       );
+
+      const updatedUser = await getMember(user.username);
+      setUser((prevUser) => ({
+        ...prevUser,
+        point: updatedUser.point,
+      }));
+
       handleCloseExtendMultipleModal();
+
     } catch (error) {
       console.error("Error extending multiple rewards:", error);
       alert("Error extending multiple rewards");
@@ -241,6 +299,11 @@ const RewardTable = () => {
       setRows((prevRows) =>
         prevRows.filter((row) => row.idx !== deleteRow.idx)
       );
+      const updatedUser = await getMember(user.username);
+      setUser((prevUser) => ({
+        ...prevUser,
+        point: updatedUser.point,
+      }));
       handleCloseDeleteDialog();
     } catch (error) {
       console.error("Error deleting reward:", error);
@@ -258,6 +321,28 @@ const RewardTable = () => {
     setDeleteRow(null);
   };
 
+  const handleOpenMultiDeleteDialog = () => {
+    if (selectionModel.length > 0) {
+      setMultiDeleteDialogOpen(true);
+    } else {
+      alert("삭제할 항목을 선택하세요.");
+    }
+  };
+
+  const handleCloseMultiDeleteDialog = () => {
+    setMultiDeleteDialogOpen(false);
+  };
+
+  const handleOpenWorkVolumeModal = (rewardId) => {
+    setSelectedRewardId(rewardId);
+    setWorkVolumeModalOpen(true);
+  };
+
+  const handleCloseWorkVolumeModal = () => {
+    setWorkVolumeModalOpen(false);
+    setSelectedRewardId(null);
+  };
+
   const handleDeleteRows = async () => {
     if (selectionModel.length === 0) {
       alert("삭제할 항목을 선택하세요.");
@@ -271,13 +356,14 @@ const RewardTable = () => {
       );
       setRows(updatedRows);
       setSelectionModel([]);
+      handleCloseMultiDeleteDialog();
     } catch (error) {
       console.error("Error deleting rewards:", error);
       alert("Error deleting rewards");
     }
   };
 
-  const handleCellClick = (params) => {
+  const handleCellClick = (params,event) => {
     if (params.value === "") {
       setCellModesModel({
         ...cellModesModel,
@@ -287,6 +373,14 @@ const RewardTable = () => {
         },
       });
     }
+    event.stopPropagation(); 
+  };
+
+  const handleRowClick = (params, event) => {
+    if (event.target.closest('.MuiCheckbox-root')) {
+      return; 
+    }
+    event.stopPropagation(); 
   };
 
   const handleUsedStatusChange = async (idx, newStatus) => {
@@ -322,8 +416,16 @@ const RewardTable = () => {
     return "";
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+  };
+  
   return (
-    <div style={{ width: "100%", height: "calc(100vh - 64px)" }}>
+    <div style={{ width: "100%" }}>
       <Box
         sx={{
           "& .super-app-theme--header": {
@@ -337,11 +439,30 @@ const RewardTable = () => {
               backgroundColor: "black",
               color: "white",
             },
+            "& .MuiDataGrid-columnHeaderCheckbox": {
+              '& .MuiCheckbox-root': {
+                borderColor: 'white',
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderRadius: '4px',
+              },
+            },
             ".expired": {
               bgcolor: "rgb(220, 220, 220)",
             },
             ".near-expired": {
               bgcolor: "rgb(238, 205, 205)",
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              borderBottom: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-cell': {
+              borderRight: '1px solid #e0e0e0',
+              borderRightColor: 'lightgray'
+            },
+            '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
+              borderRight: '1px solid #e0e0e0',
+              borderRightColor: 'lightgray'
             },
           }}
           className={classes.root}
@@ -354,9 +475,11 @@ const RewardTable = () => {
             handleOpenDeleteDialog,
             handleOpenExtendModal,
             handleOpenEditModal,
-            handleUsedStatusChange
+            handleUsedStatusChange,
+            handleOpenWorkVolumeModal
           )}
           density="compact"
+          disableColumnResize={true}
           getRowId={(row) => row.idx}
           hideFooter={false}
           checkboxSelection
@@ -371,6 +494,17 @@ const RewardTable = () => {
           onColumnVisibilityModelChange={(newModel) =>
             setColumnVisibilityModel(newModel)
           }
+          onRowClick={handleRowClick}
+          pagination
+          paginationMode="client"
+          pageSize={pageSize}
+          rowsPerPageOptions={[25, 50, 100]}
+          onPageSizeChange={handlePageSizeChange}
+          page={page}
+          onPageChange={handlePageChange}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 25 } },
+          }}
         />
         <div
           style={{
@@ -394,7 +528,7 @@ const RewardTable = () => {
             variant="contained"
             color="primary"
             style={{ marginRight: "8px" }}
-            onClick={handleDeleteRows}
+            onClick={handleOpenMultiDeleteDialog}
           >
             {selectionModel.length === 0
               ? "선택 삭제"
@@ -411,6 +545,11 @@ const RewardTable = () => {
           handleChange={handleChange}
           handleDateChange={handleDateChange}
           handleSave={handleSave}
+          userPoints={user? user.point : 0}
+          pointsToConsume={pointsToConsume}
+          remainingPoints={remainingPoints}
+          setPointsToConsume={setPointsToConsume}
+          setRemainingPoints={setRemainingPoints}
         />
         <ExtendRewardModal
           open={openExtendModal}
@@ -425,7 +564,7 @@ const RewardTable = () => {
           selectedRows={selectionModel.map((idx) =>
             rows.find((row) => row.idx === idx)
           )}
-          userPoints={user.point}
+          userPoints={user? user.point : 0}
           handleExtendMultipleSave={handleExtendMultipleSave}
           extendRowsEndDate={extendRowsEndDate}
           setExtendRowsEndDate={setExtendRowsEndDate}
@@ -442,6 +581,17 @@ const RewardTable = () => {
           onClose={handleCloseDeleteDialog}
           handleDeleteRow={handleDeleteRow}
         />
+        <DeleteDialog
+          open={multiDeleteDialogOpen}
+          onClose={handleCloseMultiDeleteDialog}
+          handleDeleteRow={handleDeleteRows}
+          multiple
+        />
+        <WorkVolumeModal
+        open={workVolumeModalOpen}
+        onClose={handleCloseWorkVolumeModal}
+        rewardId={selectedRewardId}
+      />
       </Box>
     </div>
   );

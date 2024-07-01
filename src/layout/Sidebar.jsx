@@ -41,15 +41,25 @@ const Sidebar = () => {
   return (
     <Box className={classes.sidebar}>
       <List>
-        {role === 'admin' && (
+        {/* {role === 'admin' && (
           <ListItem button>
             <ListItemIcon className={classes.icon}><Home /></ListItemIcon>
             <ListItemText primary="공지사항" classes={{ primary: classes.listItemText }} />
           </ListItem>
-        )}
+        )} */}
         <ListItem button onClick={() => navigate('/reward')}>
           <ListItemIcon className={classes.icon}><Keyboard /></ListItemIcon>
           <ListItemText primary="리워드" classes={{ primary: classes.listItemText }} />
+        </ListItem>
+        {role === 'admin' && (
+        <ListItem button onClick={() => navigate('/rewardhistory')}>
+          <ListItemIcon className={classes.icon}><Keyboard /></ListItemIcon>
+          <ListItemText primary="리워드 내역" classes={{ primary: classes.listItemText }} />
+        </ListItem>
+        )}
+        <ListItem button onClick={() => navigate('/point')}>
+          <ListItemIcon className={classes.icon}><Keyboard /></ListItemIcon>
+          <ListItemText primary="포인트" classes={{ primary: classes.listItemText }} />
         </ListItem>
         {role === 'admin' && (
           <ListItem button onClick={() => navigate('/member')}>
@@ -57,12 +67,12 @@ const Sidebar = () => {
             <ListItemText primary="회원 관리" classes={{ primary: classes.listItemText }} />
           </ListItem>
         )}
-        {role === 'admin' && (
+        {/* {role === 'admin' && (
           <ListItem button>
             <ListItemIcon className={classes.icon}><Settings /></ListItemIcon>
             <ListItemText primary="설정" classes={{ primary: classes.listItemText }} />
           </ListItem>
-        )}
+        )} */}
       </List>
       <Divider />
     </Box>
