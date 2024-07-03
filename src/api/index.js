@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 const isWithinRestrictedHours = () => {
   const now = dayjs();
-  const start = dayjs().hour(23).minute(30);
+  const start = dayjs().hour(3).minute(30);
   const end = dayjs().hour(8).minute(0).add(1, "day");
 
   return now.isAfter(start) && now.isBefore(end);
