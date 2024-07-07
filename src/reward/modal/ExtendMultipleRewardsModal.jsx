@@ -18,7 +18,8 @@ const ExtendMultipleRewardsModal = ({
   const [remainingPoints, setRemainingPoints] = useState(0);
   const [rows, setRows] = useState(selectedRows);
   const [dateChanged, setDateChanged] = useState(false);
-
+  const tomorrow = dayjs().add(3, 'day');
+  
   useEffect(() => {
     if (selectedRows.length > 0) {
       const totalWork = selectedRows.reduce((sum, row) => sum + parseInt(row.work_volume, 10), 0);
@@ -65,6 +66,7 @@ const ExtendMultipleRewardsModal = ({
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="새 종료일"
+            minDate={tomorrow}
             value={dayjs(extendRowsEndDate)}
             onChange={(newDate) => handleDateChange(newDate)}
             sx={{ width: '100%' }}

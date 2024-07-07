@@ -27,15 +27,18 @@ const Header = () => {
     const calculateRemainingTime = () => {
       const now = dayjs();
       let deadline = dayjs().hour(15).minute(30).second(0);
+
       if (now.isAfter(deadline)) {
-        deadline = deadline.add(1, 'day');
+        setRemainingTime('마감완료');
+      } else {
+        const diff = deadline.diff(now);
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        setRemainingTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
       }
-      const diff = deadline.diff(now);
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      setRemainingTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
     };
+
 
     calculateRemainingTime();
     const intervalId = setInterval(calculateRemainingTime, 1000);

@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
 const ExtendRewardModal = ({ open, onClose, reward, setReward, onSave }) => {
-  const tomorrow = dayjs().add(1, 'day');
+  const tomorrow = dayjs().add(3, 'day');
   
   useEffect(()=>{
     console.log(reward)
@@ -40,7 +40,7 @@ const ExtendRewardModal = ({ open, onClose, reward, setReward, onSave }) => {
           <DatePicker
             label="새 종료일"
             minDate={tomorrow}
-            value={reward? dayjs(reward.end_date) : dayjs()}
+            value={reward && reward.end_date ? dayjs(reward.end_date) : tomorrow}
             onChange={handleDateChange}
             sx={{ width: '100%' }}
             inputFormat="YYYY/MM/DD"

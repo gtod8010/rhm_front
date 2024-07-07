@@ -128,7 +128,6 @@ const MemberTable = () => {
       handleClose();
     } catch (error) {
       console.error("Error adding member:", error);
-      alert("Error adding member");
     }
   };
 

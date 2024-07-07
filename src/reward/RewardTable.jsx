@@ -44,6 +44,13 @@ const calculateTomorrow = () => {
   return tomorrow;
 };
 
+const calculatEndDate = () => {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 3);
+  return tomorrow;
+};
+
 const RewardTable = () => {
   const [rows, setRows] = useState([]);
   const [cellModesModel, setCellModesModel] = useState({});
@@ -72,7 +79,7 @@ const RewardTable = () => {
     work_volume: "",
     place_code: "",
     start_date: calculateTomorrow(),
-    end_date: calculateTomorrow(),
+    end_date: calculatEndDate(),
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [multiDeleteDialogOpen, setMultiDeleteDialogOpen] = useState(false);
@@ -215,7 +222,7 @@ const RewardTable = () => {
         work_volume: "",
         place_code: "",
         start_date: calculateTomorrow(),
-        end_date: calculateTomorrow(),
+        end_date: calculatEndDate(),
       });
 
       handleCloseAddModal();

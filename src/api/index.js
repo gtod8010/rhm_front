@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 const isWithinRestrictedHours = () => {
   const now = dayjs();
-  const start = dayjs().hour(3).minute(30);
+  const start = dayjs().hour(15).minute(30);
   const end = dayjs().hour(8).minute(0).add(1, "day");
 
   return now.isAfter(start) && now.isBefore(end);
@@ -11,6 +11,7 @@ const isWithinRestrictedHours = () => {
 
 const makeRequest = async (requestFunc, ...args) => {
   if (isWithinRestrictedHours()) {
+    alert("마감시간을 넘어 작업이 불가능합니다.")
     throw new Error("Requests are not allowed between 5 PM and 8 AM.");
   }
   return await requestFunc(...args);
@@ -47,29 +48,23 @@ export const getMember = async (username) => {
 };
 
 export const addMember = async (newRow) => {
-  return makeRequest(async () => {
     const response = await axios.post("/api/addMember", newRow);
     return {
       ...response.data,
       created_at: new Date(response.data.created_at),
     };
-  });
 };
 
 export const deleteMembers = async (idsToDelete) => {
-  return makeRequest(async () => {
     await axios.post("/api/deleteMembers", { ids: idsToDelete });
-  });
 };
 
 export const editMember = async (editMemberData) => {
-  return makeRequest(async () => {
     const response = await axios.post("/api/editMember", editMemberData);
     return {
       ...response.data,
       created_at: new Date(response.data.created_at),
     };
-  });
 };
 
 // -------------------------------------- reward -------------------------------------- //
