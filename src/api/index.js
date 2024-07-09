@@ -9,7 +9,7 @@ const getUserFromLocalStorage = () => {
 
 const isWithinRestrictedHours = () => {
   const now = dayjs();
-  const start = dayjs().hour(15).minute(30);
+  const start = dayjs().hour(18).minute(30);
   const end = dayjs().hour(8).minute(0).add(1, "day");
 
   return now.isAfter(start) && now.isBefore(end);
