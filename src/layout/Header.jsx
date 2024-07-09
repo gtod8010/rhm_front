@@ -24,6 +24,14 @@ const Header = () => {
   };
 
   useEffect(() => {
+    // 페이지가 로드될 때 로컬 스토리지에서 사용자 정보 복원
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, [setUser]);
+
+  useEffect(() => {
     const calculateRemainingTime = () => {
       const now = dayjs();
       let deadline = dayjs().hour(15).minute(30).second(0);
@@ -39,7 +47,6 @@ const Header = () => {
       }
     };
 
-
     calculateRemainingTime();
     const intervalId = setInterval(calculateRemainingTime, 1000);
 
@@ -50,8 +57,9 @@ const Header = () => {
     <AppBar position="static" color="default">
       <Toolbar>
         <Box display="flex" flexGrow={1.7} alignItems="center">
-          <Typography variant="h6" color="inherit" component="div">
-            <img src={logo} alt="RHM Logo" style={{ height: 40 }} /> 
+        <Typography variant="h4" component="div" style={{ fontWeight: 'bold' }}>
+            <span style={{ color: '#03c75a' }}>N</span>
+            <span style={{ color: 'gray' }}> Place</span>
           </Typography>
         </Box>
         <Box display="flex" flexGrow={1} justifyContent="center" alignItems="center">
@@ -64,9 +72,9 @@ const Header = () => {
             <React.Fragment>
               <AccountCircle style={{ marginRight: 8 }} />
               <Typography variant="body1" color="inherit" style={{ marginRight: 16 }}>
-                계정 : {user.username}
+                계정 : {user.username} {user.role === 'admin' && '(관리자)'}
               </Typography>
-              {user.point && (
+              {user.role === 'user' && user.point && (
                 <React.Fragment>
                   <LocalAtmIcon style={{ marginRight: 8 }} />
                   <Typography variant="body1" color="inherit" style={{ marginRight: 16 }}>

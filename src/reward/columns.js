@@ -39,7 +39,7 @@ const getColumns = (handleOpenDeleteDialog, handleOpenExtendModal, handleOpenEdi
   { field: 'idx', headerName: '번호',headerClassName: 'super-app-theme--header', flex: 0.1, align: 'center', headerAlign: 'center' ,renderCell: renderCellWithWrap },
   { field: 'id', headerName: '계정', headerClassName: 'super-app-theme--header',flex: 1, editable: true, align: 'center', headerAlign: 'center' ,renderCell: renderCellWithWrap },
   { field: 'reward_no', headerName: '리워드 번호.',headerClassName: 'super-app-theme--header', flex: 0.1, editable: true, align: 'center', headerAlign: 'center',renderCell: renderCellWithWrap  },
-  { field: 'reward_type', headerName: '리워드 종류', headerClassName: 'super-app-theme--header',minWidth:95,flex: 0.1, editable: true, align: 'center', headerAlign: 'center',renderCell: renderCellWithWrap  },
+  { field: 'reward_type', headerName: '리워드 종류', headerClassName: 'super-app-theme--header',minWidth:95,flex: 0.2, editable: true, align: 'center', headerAlign: 'center',renderCell: renderCellWithWrap  },
   {
     field: 'status',
     headerName: '상태',
@@ -51,9 +51,9 @@ const getColumns = (handleOpenDeleteDialog, handleOpenExtendModal, handleOpenEdi
     renderCell: (params) => renderStatusChip(params.value),
   },
   { field: 'company_name', headerName: '업체명', headerClassName: 'super-app-theme--header',flex: 1, editable: true, align: 'center', headerAlign: 'center', renderCell: renderCellWithWrap, },
-  { field: 'place_code', headerName: '플레이스코드', headerClassName: 'super-app-theme--header',flex: 1, editable: true, align: 'center', headerAlign: 'center',renderCell: renderCellWithWrap  },
+  { field: 'place_code', headerName: '플레이스코드', headerClassName: 'super-app-theme--header',minWidth:100, flex: 0.1, editable: true, align: 'center', headerAlign: 'center',renderCell: renderCellWithWrap  },
   { field: 'setting_keyword', headerName: '셋팅 키워드', headerClassName: 'super-app-theme--header',flex: 1, editable: true, align: 'center', headerAlign: 'center', renderCell: renderCellWithWrap },
-  { field: 'final_keyword', headerName: '최종 키워드', headerClassName: 'super-app-theme--header',flex: 1, editable: true, align: 'center', headerAlign: 'center', renderCell: renderCellWithWrap  }, 
+  { field: 'final_keyword', headerName: '최종 키워드', headerClassName: 'super-app-theme--header',flex: 1.4, editable: true, align: 'center', headerAlign: 'center', renderCell: renderCellWithWrap  }, 
   { field: 'start_date', headerName: '시작일', headerClassName: 'super-app-theme--header', minWidth:100,flex: 0.1, editable: true, type: 'date', align: 'center', headerAlign: 'center'},
   { field: 'end_date', headerName: '종료일',  headerClassName: 'super-app-theme--header',minWidth:100,flex: 0.1, editable: true, type: 'date', align: 'center', headerAlign: 'center' },
   { 
@@ -80,20 +80,22 @@ const getColumns = (handleOpenDeleteDialog, handleOpenExtendModal, handleOpenEdi
     align: 'center',
     headerAlign: 'center',
     renderCell: (params) => (
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
         <Button
+          variant="contained"
           size="small"
-          sx={{ minWidth: '30px', padding: '4px' }}
+          sx={{ minWidth: '30px', padding: '4px', backgroundColor: 'gray', color: 'white' }}
           onClick={(event) => {
             event.stopPropagation();
-            handleOpenEditModal(params.row)
+            handleOpenEditModal(params.row);
           }}
         >
           수정
         </Button>
         <Button
+          variant="contained"
           size="small"
-          sx={{ minWidth: '30px', padding: '4px' }}
+          sx={{ minWidth: '30px', padding: '4px', backgroundColor: 'gray', color: 'white' }}
           onClick={(event) => {
             event.stopPropagation();
             handleOpenDeleteDialog(params.row);
@@ -102,8 +104,9 @@ const getColumns = (handleOpenDeleteDialog, handleOpenExtendModal, handleOpenEdi
           삭제
         </Button>
         <Button
+          variant="contained"
           size="small"
-          sx={{ minWidth: '30px', padding: '4px' }}
+          sx={{ minWidth: '30px', padding: '4px', backgroundColor: 'gray', color: 'white' }}
           onClick={(event) => {
             event.stopPropagation();
             handleOpenExtendModal(params.row);
@@ -112,8 +115,9 @@ const getColumns = (handleOpenDeleteDialog, handleOpenExtendModal, handleOpenEdi
           연장
         </Button>
         <Button
+          variant="contained"
           size="small"
-          sx={{ minWidth: '30px', padding: '4px' }}
+          sx={{ minWidth: '30px', padding: '4px', backgroundColor: 'gray', color: 'white' }}
           onClick={(event) => {
             event.stopPropagation();
             handleOpenWorkVolumeModal(params.row.idx);

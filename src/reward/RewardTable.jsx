@@ -71,6 +71,7 @@ const RewardTable = () => {
     final_keyword: "",
     work_volume: "",
     place_code: "",
+    rewardType:"플레이스(저장)"
   });
   const [newReward, setNewReward] = useState({
     company_name: "",
@@ -78,6 +79,7 @@ const RewardTable = () => {
     final_keyword: "",
     work_volume: "",
     place_code: "",
+    rewardType:"플레이스(저장)",
     start_date: calculateTomorrow(),
     end_date: calculatEndDate(),
   });
@@ -128,6 +130,7 @@ const RewardTable = () => {
       place_code: "",
       start_date: null,
       end_date: null,
+      rewardType:"플레이스(저장)"
     });
   };
 
@@ -182,6 +185,11 @@ const RewardTable = () => {
     setNewReward((prev) => ({ ...prev, [field]: date.toDate() }));
   };
 
+  const handleSelectChange = (event) => {
+    const { value } = event.target;
+    setNewReward((prev) => ({ ...prev, rewardType: value }));
+  };
+
   const handleSave = async () => {
     if (
       !newReward.company_name ||
@@ -190,7 +198,8 @@ const RewardTable = () => {
       !newReward.work_volume ||
       !newReward.place_code ||
       !newReward.start_date ||
-      !newReward.end_date
+      !newReward.end_date ||
+      !newReward.rewardType
     ) {
       alert("All fields are required");
       return;
@@ -206,6 +215,7 @@ const RewardTable = () => {
         work_volume: newReward.work_volume,
         start_date: newReward.start_date,
         end_date: newReward.end_date,
+        rewardType : newReward.rewardType
       });
       setRows((prevRows) => [...prevRows, addedRow]);
       
@@ -221,6 +231,7 @@ const RewardTable = () => {
         final_keyword: "",
         work_volume: "",
         place_code: "",
+        rewardType:"플레이스(저장)",
         start_date: calculateTomorrow(),
         end_date: calculatEndDate(),
       });
@@ -445,6 +456,7 @@ const RewardTable = () => {
             ".MuiDataGrid-columnHeaderTitleContainer": {
               backgroundColor: "black",
               color: "white",
+              overflow: "hidden"
             },
             "& .MuiDataGrid-columnHeaderCheckbox": {
               '& .MuiCheckbox-root': {
@@ -470,6 +482,18 @@ const RewardTable = () => {
             '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
               borderRight: '1px solid #e0e0e0',
               borderRightColor: 'lightgray'
+            },
+            '& .MuiDataGrid-columnHeaderTitleContainerContent:hover': {
+              cursor: 'default',
+            },
+            '& .MuiDataGrid-columnSeparator': {
+              display: 'none',
+            },
+            '& .MuiDataGrid-iconButtonContainer': {
+              display: 'none',
+            },
+            '& .MuiDataGrid-menuIconButton': {
+              display: 'none',
             },
           }}
           className={classes.root}
@@ -551,6 +575,7 @@ const RewardTable = () => {
           newReward={newReward}
           handleChange={handleChange}
           handleDateChange={handleDateChange}
+          handleSelectChange={handleSelectChange}
           handleSave={handleSave}
           userPoints={user? user.point : 0}
           pointsToConsume={pointsToConsume}

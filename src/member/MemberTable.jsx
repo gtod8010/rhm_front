@@ -156,16 +156,18 @@ const MemberTable = () => {
       alert("삭제할 항목을 선택하세요.");
       return;
     }
-
-    const idsToDelete = selectionModel.map(
-      (idx) => rows.find((row) => row.idx === idx).id
-    );
+    console.log(selectionModel)
+    const idsToDelete = selectionModel;
+    // selectionModel
+    //   .map((idx) => rows.find((row) => row.idx === idx))
+    //   .filter((row) => row !== undefined) // 유효한 행만 포함
+    //   .map((row) => row.id);
 
     try {
       await deleteMembers(idsToDelete);
-      alert("Members deleted successfully");
+      alert("멤버 삭제에 성공하였습니다.");
       const updatedRows = rows.filter(
-        (row) => !selectionModel.includes(row.idx)
+        (row) => !selectionModel.includes(row.id)
       );
       setRows(updatedRows);
       setSelectionModel([]);

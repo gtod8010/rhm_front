@@ -1,6 +1,12 @@
 import axios from "axios";
 import dayjs from "dayjs";
 
+const getUserFromLocalStorage = () => {
+  const storedUser = localStorage.getItem('user');
+  return storedUser ? JSON.parse(storedUser) : null;
+};
+
+
 const isWithinRestrictedHours = () => {
   const now = dayjs();
   const start = dayjs().hour(15).minute(30);
@@ -10,10 +16,13 @@ const isWithinRestrictedHours = () => {
 };
 
 const makeRequest = async (requestFunc, ...args) => {
-  if (isWithinRestrictedHours()) {
-    alert("마감시간을 넘어 작업이 불가능합니다.")
-    throw new Error("Requests are not allowed between 5 PM and 8 AM.");
+  const user = getUserFromLocalStorage();
+  
+  if (user && user.role !== 'admin' && isWithinRestrictedHours()) {
+    alert("마감시간을 넘어 작업이 불가능합니다.");
+    throw new Error("Requests are not allowed between 3:30 PM and 8 AM.");
   }
+  
   return await requestFunc(...args);
 };
 
@@ -131,9 +140,7 @@ export const extendMultipleRewards = async (selectionModel, endDate) => {
 };
 
 export const deleteReward = async (ids) => {
-  return makeRequest(async () => {
     await axios.post("/api/deleteRewards", { ids });
-  });
 };
 
 // -------------------------------------- status --------------------------------------

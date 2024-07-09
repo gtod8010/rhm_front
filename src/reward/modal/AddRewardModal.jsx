@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, TextField, Box, Grid, Button, Typography } from "@mui/material";
+import { Modal, TextField, Box, Grid, Button, Typography, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro";
 import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -13,6 +13,7 @@ const AddRewardModal = ({
   setNewReward,
   handleChange,
   handleDateChange,
+  handleSelectChange,
   handleSave,
   userPoints,
   pointsToConsume,
@@ -102,7 +103,24 @@ const AddRewardModal = ({
           onChange={handleChange}
           fullWidth
           margin="normal"
+          sx={{ paddingBottom: 2 }}
         />
+        <FormControl fullWidth>
+        <InputLabel shrink htmlFor="select-multiple-native"  sx={{ top: '-6px' }} >
+          리워드 타입 설정
+        </InputLabel>
+          <Select
+            size="small" 
+            fullWidth 
+            value={newReward.rewardType}
+            onChange={handleSelectChange}
+            label="옵션"
+            name="rewardType"
+          >
+            <MenuItem value="플레이스(저장)">플레이스(저장)</MenuItem>
+            <MenuItem value="플레이스(검색)">플레이스(검색)</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           size="small"
           label="작업량"
