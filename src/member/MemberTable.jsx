@@ -26,14 +26,14 @@ const MemberTable = () => {
   const [newMember, setNewMember] = useState({
     username: "",
     password: "",
-    point: "",
+    point: 0,
     agency: "",
   });
   const [editMemberData, setEditMemberData] = useState({
     id: "",
     username: "",
     password: "",
-    point: "",
+    point: 0,
     agency: "",
     addPoints: 0,
   });
@@ -59,12 +59,21 @@ const MemberTable = () => {
     }
   }, [user]);
 
+  // useEffect(() => {
+  //   setEditMemberData((prev) => ({
+  //     ...prev,
+  //     finalPoints: parseInt(prev.point) + parseInt(prev.addPoints || 0),
+  //   }));
+  // }, [editMemberData.addPoints]);
+
   useEffect(() => {
     setEditMemberData((prev) => ({
       ...prev,
-      finalPoints: parseInt(prev.point) + parseInt(prev.addPoints || 0),
+      finalPoints:
+        parseInt(prev.point || "0", 10) + parseInt(prev.addPoints || "0", 10),
     }));
   }, [editMemberData.addPoints]);
+  
 
   const handleAddRow = () => {
     setOpen(true);
@@ -84,7 +93,7 @@ const MemberTable = () => {
       id: row.id || "",
       username: row.username || "",
       password: row.password || "",
-      point: row.point || "",
+      point: row.point || 0,
       agency: row.agency || "",
     });
     setEditOpen(true); // 수정 모달 창 열기
@@ -133,10 +142,11 @@ const MemberTable = () => {
 
   const handleEditSave = async () => {
     try {
-      const finalPoints = parseInt(editMemberData.point) + parseInt(editMemberData.addPoints || 0);
+      const finalPoints =
+        parseInt(editMemberData.point || 0, 10) + parseInt(editMemberData.addPoints || 0, 10);
       const updatedMemberData = {
         ...editMemberData,
-        point: finalPoints
+        point: finalPoints,
       };
   
       const updatedRow = await editMember(updatedMemberData);

@@ -35,10 +35,20 @@ const WorkVolumeModal = ({ open, onClose, rewardId }) => {
         <DataGridPro
           rows={rows}
           columns={[
-            { field: 'gender', headerName: '성별', flex: 1 },
-            { field: 'age_group', headerName: '연령대', flex: 1 },
-            { field: 'ip_address', headerName: '접속 IP', flex: 1 },
-            { field: 'access_time', headerName: '시간', flex: 1.5, type: 'dateTime' },
+            { 
+              field: 'gender', 
+              headerName: '성별', 
+              headerAlign: 'center', 
+              flex: 1, 
+              align: 'center',
+              valueGetter: (params) => 
+              // console.log(params)
+
+              params === '남' ? '남성' : '여성'
+            },
+            { field: 'age_group', headerName: '연령대', headerAlign:'center',flex: 1,align:'center' },
+            { field: 'ip_address', headerName: '접속 IP', headerAlign:'center',flex: 1,align:'center' },
+            { field: 'access_time', headerName: '시간', headerAlign:'center',flex: 1.5, type: 'dateTime',align:'center' },
           ]}
           loading={loading}
           autoHeight={false}
